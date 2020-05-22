@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.util.Objects;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -44,17 +43,15 @@ public class ToastyPlugin  implements MethodCallHandler {
 
     private static void setIcon(View view, int id) {
         if (view != null) {
-            ImageView imageView = (ImageView) view.findViewById(R.id.toastIcon);
+            ImageView imageView = view.findViewById(R.id.toastIcon);
             imageView.setImageResource(id);
         }
     }
 
     private static void setIconColor(View view, int color) {
         if (view != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.FROYO) {
-                ImageView imageView = (ImageView) view.findViewById(R.id.toastIcon);
-                imageView.setColorFilter(color);
-            }
+            ImageView imageView = view.findViewById(R.id.toastIcon);
+            imageView.setColorFilter(color);
         }
     }
 
@@ -62,7 +59,7 @@ public class ToastyPlugin  implements MethodCallHandler {
         if (view != null) {
             if (iconSize != null) {
                 int dpIconSize = Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, iconSize.intValue(), context.getResources().getDisplayMetrics()));
-                ImageView imageView = (ImageView) view.findViewById(R.id.toastIcon);
+                ImageView imageView = view.findViewById(R.id.toastIcon);
                 imageView.getLayoutParams().height = dpIconSize;
                 imageView.getLayoutParams().width = dpIconSize;
             }
@@ -97,21 +94,21 @@ public class ToastyPlugin  implements MethodCallHandler {
 
     private static void setToastText(Toast toast, String text, View view, int id) {
         if (toast != null && view != null) {
-            TextView toastMessage = (TextView) view.findViewById(id);
+            TextView toastMessage = view.findViewById(id);
             toastMessage.setText(text);
         }
     }
 
     private static void setToastMessageSize(View view, float size, int id) {
         if (view != null) {
-            TextView toastMessage = (TextView) view.findViewById(id);
+            TextView toastMessage = view.findViewById(id);
             toastMessage.setTextSize(size);
         }
     }
 
     private static void setToastMessageColor(View view, int color, int id) {
         if (view != null) {
-            TextView toastMessage = (TextView) view.findViewById(id);
+            TextView toastMessage = view.findViewById(id);
             toastMessage.setTextColor(color);
         }
     }
@@ -129,10 +126,10 @@ public class ToastyPlugin  implements MethodCallHandler {
         }
     }
 
-    private static void createTypedToast(MethodCall call, View view, Toast toast, Context context, int drawabl, int icon) {
-        String message = Objects.requireNonNull(call.argument("message")).toString();
-        String length = Objects.requireNonNull(call.argument("length")).toString();
-        String gravity = Objects.requireNonNull(call.argument("gravity")).toString();
+    private static void createTypedToast(MethodCall call, View view, Toast toast, Context context, int drawable, int icon) {
+        String message = call.argument("message") != null ? call.argument("message").toString() : "";
+        String length = call.argument("length") != null ? call.argument("length").toString() : "short";
+        String gravity = call.argument("gravity") != null ? call.argument("gravity").toString() : "bottom";
         Number fontSize = call.argument("font_size");
         Number fontColor = call.argument("font_color");
         Number iconColor = call.argument("icon_color");
@@ -155,7 +152,7 @@ public class ToastyPlugin  implements MethodCallHandler {
                 ToastyPlugin.setIconColor(view, iconColor.intValue());
             }
             ToastyPlugin.setIconSize(view, iconSize, context);
-            ToastyPlugin.setToastDrawable(view, null, context, false, drawabl);
+            ToastyPlugin.setToastDrawable(view, null, context, false, drawable);
         }
 
         toast.show();
@@ -166,9 +163,9 @@ public class ToastyPlugin  implements MethodCallHandler {
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
             case "showToast": {
-                String message = Objects.requireNonNull(call.argument("message")).toString();
-                String length = Objects.requireNonNull(call.argument("length")).toString();
-                String gravity = Objects.requireNonNull(call.argument("gravity")).toString();
+                String message = call.argument("message") != null ? call.argument("message").toString() : "";
+                String length = call.argument("length") != null ? call.argument("length").toString() : "short";
+                String gravity = call.argument("gravity") != null ? call.argument("gravity").toString() : "bottom";
                 Number fontSize = call.argument("font_size");
                 Number fontColor = call.argument("font_color");
                 Number backColor = call.argument("back_color");
